@@ -13,10 +13,13 @@ pipeline {
             steps {
                 sh '''
                 apt-get update
-                apt-get install -y python3-pip
+                apt-get install -y python3-venv
 
-                pip3 install --upgrade pip
-                pip3 install -r requirements.txt
+                python3 -m venv venv
+                . venv/bin/activate
+
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 '''
             }
         }
@@ -24,7 +27,8 @@ pipeline {
         stage('Train Model') {
             steps {
                 sh '''
-                python3 scripts/train.py
+                . venv/bin/activate
+                python scripts/train.py
                 '''
             }
         }
@@ -32,10 +36,11 @@ pipeline {
         stage('Read Metrics') {
             steps {
                 sh '''
+                . venv/bin/activate
                 echo "===== MODEL METRICS ====="
                 echo "batch2_2022bcs0098"
 
-                python3 -c "
+                python -c "
 import json
 m=json.load(open('metrics.json'))
 print('R2:',m['r2'])
