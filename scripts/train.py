@@ -10,7 +10,7 @@ from xgboost import XGBRegressor
 DATA_PATH = "dataset/winequality-red.csv"
 
 # 🔥 FIX: dataset has no header
-df = pd.read_csv(DATA_PATH, sep=";", header=None)
+df = pd.read_csv(DATA_PATH, sep="\s+", header=None)
 
 # 🔥 ADD COLUMN NAMES
 df.columns = [
