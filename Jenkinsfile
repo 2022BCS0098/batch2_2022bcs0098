@@ -12,8 +12,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                python3 -m venv venv
-                . venv/bin/activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
@@ -23,7 +21,6 @@ pipeline {
         stage('Train Model') {
             steps {
                 sh '''
-                . venv/bin/activate
                 python scripts/train.py
                 '''
             }
@@ -34,7 +31,7 @@ pipeline {
                 sh '''
                 . venv/bin/activate
                 echo "===== MODEL METRICS ====="
-                echo "btach2_2022bcs0098"
+                echo "batch2_2022bcs0098"
 
                 python -c "
 import json
