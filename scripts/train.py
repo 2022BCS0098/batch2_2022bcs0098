@@ -6,34 +6,69 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from xgboost import XGBRegressor
 
-# LOAD DATA
-df = pd.read_csv("dataset/winequality-red.csv", sep=";")
+# ------------------ LOAD DATA ------------------
+DATA_PATH = "dataset/winequality-red.csv"
 
+# 🔥 FIX: dataset has no header
+df = pd.read_csv(DATA_PATH, sep=";", header=None)
+
+# 🔥 ADD COLUMN NAMES
+df.columns = [
+    "fixed acidity",
+    "volatile acidity",
+    "citric acid",
+    "residual sugar",
+    "chlorides",
+    "free sulfur dioxide",
+    "total sulfur dioxide",
+    "density",
+    "pH",
+    "sulphates",
+    "alcohol",
+    "quality"
+]
+
+# ------------------ SPLIT ------------------
 X = df.drop("quality", axis=1)
 y = df["quality"]
 
-# SPLIT
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=42
 )
 
-# MODEL
-model = XGBRegressor(n_estimators=100)
+# ------------------ MODEL ------------------
+model = XGBRegressor(
+    n_estimators=300,
+    max_depth=5,
+    learning_rate=0.05,
+    subsample=0.8,
+    colsample_bytree=0.8,
+    objective="reg:squarederror",
+    random_state=42,
+    n_jobs=-1
+)
+
 model.fit(X_train, y_train)
 
-# EVALUATE
+# ------------------ EVALUATION ------------------
 y_pred = model.predict(X_test)
 
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-# SAVE
+# ------------------ SAVE ------------------
 joblib.dump(model, "model.pkl")
 
-with open("metrics.json", "w") as f:
-    json.dump({"r2": float(r2), "mse": float(mse)}, f)
+metrics = {
+    "r2": float(r2),
+    "mse": float(mse)
+}
 
-print("XGBOOST TRAINING RUN")
+with open("metrics.json", "w") as f:
+    json.dump(metrics, f, indent=4)
+
+# ------------------ LOGS ------------------
+print("===== MODEL METRICS =====")
 print("batch2_2022bcs0098")
 print(f"R2 Score: {r2}")
 print(f"MSE: {mse}")
