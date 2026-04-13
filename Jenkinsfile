@@ -29,7 +29,6 @@ pipeline {
         stage('Read Metrics') {
             steps {
                 sh '''
-                . venv/bin/activate
                 echo "===== MODEL METRICS ====="
                 echo "batch2_2022bcs0098"
 
