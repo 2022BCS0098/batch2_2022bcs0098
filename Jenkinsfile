@@ -12,8 +12,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                pip install --upgrade pip
-                pip install -r requirements.txt
+                apt-get update
+                apt-get install -y python3-pip
+
+                pip3 install --upgrade pip
+                pip3 install -r requirements.txt
                 '''
             }
         }
@@ -21,7 +24,7 @@ pipeline {
         stage('Train Model') {
             steps {
                 sh '''
-                python scripts/train.py
+                python3 scripts/train.py
                 '''
             }
         }
@@ -32,7 +35,7 @@ pipeline {
                 echo "===== MODEL METRICS ====="
                 echo "batch2_2022bcs0098"
 
-                python -c "
+                python3 -c "
 import json
 m=json.load(open('metrics.json'))
 print('R2:',m['r2'])
@@ -45,7 +48,7 @@ print('MSE:',m['mse'])
         stage('Docker Build') {
             steps {
                 sh '''
-                docker build -t kushal2022bcs0098/btach2_2022bcs0098:latest .
+                docker build -t kushal2022bcs0098/batch2_2022bcs0098:latest .
                 '''
             }
         }
